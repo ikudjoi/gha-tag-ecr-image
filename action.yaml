@@ -1,0 +1,24 @@
+name: Retag existing image
+description: Applies an existing ECR image a new tag
+inputs:
+  source-tag:
+    description: Existing source tag
+    required: true
+    type: string
+  target-tag:
+    description: Target tag
+    required: true
+    type: string
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      id: tag
+      run: |
+        manifest=$(aws ecr batch-get-image --repository-name etl-image --image-ids imageTag=${{ inputs.source-tag }} --query 'images[].imageManifest' --output text) &>/dev/null
+        if [ -z "$manifest" ]
+        then
+          echo "Source tag ${{ inputs.source-tag }} not found!" 1>&2
+          exit 1
+        fi
+        aws ecr put-image --repository-name etl-image --image-tag ${{ inputs.target-tag }} --image-manifest "$manifest";

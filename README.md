@@ -1,2 +1,3 @@
 # gha-tag-ecr-image
-Tag an existing AWS ECR image with a new tag
+Composite GitHub action that tags an existing AWS ECR image with a new tag.
+AWS access is prerequisite for the action.
